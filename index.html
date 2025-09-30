@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Steal the Brainrot — Climate Quiz Party (Rarities & Points, BUGFIX)</title>
+<title>Steal the Brainrot 😛😛😛 (Rarities & Points, BUGFIX)</title>
 <style>
   :root{--bg:#fcfeff;--card:#fff;--ink:#072038;--muted:#526779;--accent:#1f9c93}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#f0fbff 0%,#ffffff 60%);color:var(--ink);display:flex;align-items:center;justify-content:center;min-height:100vh}
@@ -38,7 +38,7 @@
   .popup header {
     display:flex;align-items:center;justify-content:space-between;margin-bottom:6px
   }
-  .popup h4 {margin:0;font-size:14px}
+  .popup h3 {margin:0;font-size:14px}
   .popup .x {
     width:22px;height:22px;border-radius:6px;border:1px solid #e2e8f5;background:#f5f8ff;color:#233;display:grid;place-items:center;cursor:pointer
   }
@@ -55,13 +55,13 @@
 <div class="wrap">
   <header>
     <div>
-      <h1>🧠 Steal the Brainrot</h1>
-      <div class="subtitle">Correct answer → choose to <b>Steal</b> or <b>Add</b> a random brainrot. Brainrots have rarities & points. Highest total points wins.</div>
+      <h1>😛 Steal the Brainrot</h1>
+      <div class="subtitle">Correct answer → choose to <b>Steal</b> or <b>Add</b> a random brainrot. Brainrots have rankings & points. Highest total points wins.</div>
     </div>
     <div class="controls">
       <button id="newGame" class="secondary">New Game</button>
       <button id="showRules" class="secondary">Rules</button>
-      <button id="demoScam" class="secondary">Show Fake Ad</button>
+      <button id="demoScam" class="secondary">Please Donate</button>
     </div>
   </header>
 
@@ -74,13 +74,13 @@
     </section>
 
     <aside class="card sidebar">
-      <h3>Brainrot Legend</h3>
+      <h3>Brainrot Legend </h3>
       <div class="log" id="legend" style="height:auto">
-        <div>Common <b>🧠</b> = 1 pt</div>
-        <div>Uncommon <b>🌿</b> = 2 pts</div>
-        <div>Rare <b>✨</b> = 3 pts</div>
-        <div>Epic <b>🌎</b> = 4 pts</div>
-        <div>Legendary <b>🐻‍❄️</b> Polarbario Scandinavío = 5 pts</div>
+        <div>Unemployed <b>💼</b> Job Job Job Sahur = 1 pt</div>
+        <div>Food <b>💩</b> Poopaloni Lalalalala = 2 pts</div>
+        <div>Fungal  <b>🦠</b> = Yumirino Bacterio Infesto 3 pts</div>
+        <div>Gooonnnnyyyyy <b>🌎</b> = Everyony Gononono 4 pts</div>
+        <div>Extinct <b>🐻‍❄️</b> Polarbario Scandinavío = 5 pts</div>
       </div>
       <h3>Players</h3>
       <div id="players" class="players"></div>
@@ -96,7 +96,7 @@
     <h2>How to Play</h2>
     <ul>
       <li>Answer a question on your turn.</li>
-      <li><b>Correct</b> → choose <b>Steal</b> (take best token from someone) or <b>Add</b> (random token for you).</li>
+      <li><b>Correct</b> → choose <b>Steal</b> (take best brainrot from someone) or <b>Add</b> (random brainrot for you).</li>
       <li><b>Wrong</b> → no tokens change.</li>
       <li>After 8 rounds, highest total points wins.</li>
     </ul>
@@ -104,12 +104,12 @@
   </div>
 </div>
 
-<!-- Fake scam ad (fictional) -->
+<!-- Fake scam ad  -->
 <div id="scamModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
   <div style="background:#fff;padding:16px;border-radius:12px;max-width:520px;text-align:center">
-    <h2>🚨 Pop-Up Storm Incoming 🚨</h2>
-    <p>“Donate to save us from <b>Pop Star Nova</b>’s lawsuit!”</p>
-    <p style="font-size:13px;color:#777;margin-top:-4px">Try closing all the pop-ups to see the truth.</p>
+    <h2>🚨 PLEASE DONATE WE ARE GETTING SUEEEDDD 🚨</h2>
+    <p>“Donate to save us from <b>Saylor Twift</b>’s lawsuit!”</p>
+    <p style="font-size:13px;color:#777;margin-top:-4px">CLICK ME. CHOOSE ME. LOVE ME. *not a scam trust.*</p>
     <div style="display:flex;gap:8px;justify-content:center;margin-top:10px">
       <button id="scamStart" class="cta">Start Pop-Ups</button>
       <button id="scamClose" class="ghost">Close</button>
@@ -122,10 +122,10 @@
 (()=>{
   // === Token rarities & points ===
   const TOKENS = [
-    {name:'Common',    emoji:'🧠', points:1, weight:50},
-    {name:'Uncommon',  emoji:'🌿', points:2, weight:30},
-    {name:'Rare',      emoji:'✨', points:3, weight:15},
-    {name:'Epic',      emoji:'🌎', points:4, weight:4},
+    {name:'Job Job Job Sahur',    emoji:'💼', points:1, weight:50},
+    {name:'Poopaloni Lalalalala',  emoji:'💩', points:2, weight:30},
+    {name:'Yumirino Bacterio Infesto',      emoji:'🦠', points:3, weight:15},
+    {name:'Everyony Gononono',      emoji:'🌎', points:4, weight:4},
     {name:'Polarbario Scandinavío', emoji:'🐻‍❄️', points:5, weight:1}
   ];
   const totalPoints = arr => arr.reduce((s,t)=>s+t.points,0);
@@ -148,6 +148,35 @@
     {q:"Airplanes contribute to warming not just by CO₂ but also?", a:["Cooling clouds","Contrails & nitrogen oxides","They don’t","Rainbow trails"], correct:1, explain:"Contrails and NOₓ add extra warming."},
     {q:"Short flights have higher emissions per km?", a:["True","False"], correct:0, explain:"Takeoff/landing burn more fuel per km."},
     {q:"Why can non-stop flights be better for emissions?", a:["More snacks","Fewer takeoffs/landings","Cooler planes","They use biofuel"], correct:1, explain:"Takeoff/landing are fuel-heavy; fewer of them can reduce emissions."}
+    {q:"Which transport mode is usually lowest emissions per km for individuals?", a:["Car (solo)","Bus","Domestic flight","Motorcycle"], correct:1, explain:"Buses have high occupancy and lower per-person emissions."},
+    {q:"Most airplane emissions occur during…", a:["Takeoff & landing only","Cruise on long-haul","Taxiing","Boarding"], correct:1, explain:"Cruise dominates fuel burn on long-haul; takeoff/landing matter more on short hops."},
+    {q:"Which is generally the best packing for cold-drink climate impact?", a:["Single-use glass","Aluminum can","Thick plastic bottle","Carton (aseptic)"], correct:3, explain:"Cartons are lightweight and often lower-impact than glass."},
+    {q:"Biggest global source of human-caused GHGs?", a:["Buildings","Industry","Electricity & heat","Agriculture"], correct:2, explain:"Power generation is a major share globally (varies by country)."},
+    {q:"Refrigerants like HFCs are potent because…", a:["They cool too fast","They have high global warming potentials","They contain oxygen","They cause acid rain"], correct:1, explain:"HFCs can have GWPs thousands of times higher than CO₂."},
+    {q:"‘Scope 3’ emissions are…", a:["Only your office lights","Your company’s direct fuel use","Your supply chain & product use","Emissions you offset"], correct:2, explain:"Scope 3 covers value-chain emissions, often the largest share."},
+    {q:"Best way to reduce food-related emissions?", a:["Always buy organic","Reduce food waste","Only eat imported foods","Freeze everything"], correct:1, explain:"Cutting waste is a powerful, practical lever."},
+    {q:"Beef typically has higher footprint than chicken because…", a:["Transport distance","Methane from enteric fermentation","Seasoning used","Refrigeration"], correct:1, explain:"Ruminants emit methane; feed land-use also large."},
+    {q:"Home energy quick win in most climates:", a:["LED bulbs","Painting walls white","Turning fridge colder","Keeping windows open in winter"], correct:0, explain:"LEDs are low-cost, high-impact over time."},
+    {q:"Which appliance label indicates efficiency in many regions?", a:["ENERGY STAR","UL Listed","FCC","HDMI"], correct:0, explain:"ENERGY STAR identifies energy-efficient products."},
+    {q:"Planting trees is always carbon neutral immediately.", a:["True","False"], correct:1, explain:"Trees remove CO₂ over years/decades; permanence matters."},
+    {q:"Best tire pressure practice for efficiency:", a:["Under-inflate slightly","Exact recommended PSI","Over-inflate by 10 PSI","Doesn’t matter"], correct:1, explain:"Manufacturer-recommended PSI optimizes safety & efficiency."},
+    {q:"EVs typically have higher manufacturing emissions but lower…", a:["Tailpipe emissions","Battery weight","Electricity price","Tire wear"], correct:0, explain:"No tailpipe; lifecycle often better as grids get cleaner."},
+    {q:"Most effective thermostat move:", a:["Crank way down at night","Program small setpoint shifts","Turn HVAC off while away for 1 hour","Leave constant at 72°F"], correct:1, explain:"Small programmed changes save energy comfortably."},
+    {q:"Induction stoves help climate mainly by…", a:["Using helium","Being wireless","High efficiency & electrification","Cooking faster"], correct:2, explain:"They’re efficient and enable moving from gas to clean electricity."},
+    {q:"Fast fashion’s footprint is large due to…", a:["Dyeing & water use","Long product life","Slow shipping by sea","High resale rates"], correct:0, explain:"Dyeing/finishing, fiber production, and waste drive impacts."},
+    {q:"Which is a greenhouse gas?", a:["Nitrogen (N₂)","Oxygen (O₂)","Water vapor (H₂O)","Argon (Ar)"], correct:2, explain:"Water vapor is a greenhouse gas (though driven by temperature)."},
+    {q:"‘Carbon intensity’ of electricity means…", a:["CO₂ per kWh generated","CO₂ per household","CO₂ per month","CO₂ per device"], correct:0, explain:"It’s emissions per unit of electricity."},
+    {q:"Most efficient lighting tech widely available:", a:["Incandescent","Halogen","Compact fluorescent","LED"], correct:3, explain:"LEDs beat CFLs and halogens in efficiency."},
+    {q:"Why rail freight can be climate-friendly:", a:["Trains use helium","High ton-miles per unit energy","They fly sometimes","They’re slower"], correct:1, explain:"Trains move heavy loads with relatively low energy per ton-mile."},
+    {q:"Good habit when flying is unavoidable:", a:["Pack heavier","Connect more","Choose economy class","Fly older planes"], correct:2, explain:"Economy seats result in lower per-passenger emissions."},
+    {q:"Best time to charge EV (climate-wise) on a solar-heavy grid?", a:["Midday","Midnight","Sunrise","Anytime"], correct:0, explain:"Midday often has surplus solar → lower marginal emissions."},
+    {q:"What’s a carbon sink?", a:["Source of CO₂","Place that stores more carbon than it emits","A kitchen appliance","Only oceans"], correct:1, explain:"Sinks (forests, oceans, soils) absorb more than they release."},
+    {q:"Home water heating tip:", a:["Set heater to 140–150°F always","Insulate hot water pipes/tank","Run hot tap to ‘clean’ pipes","Use only baths"], correct:1, explain:"Insulation reduces heat loss and energy use."},
+    {q:"A circular economy aims to…", a:["Use and dump faster","Design out waste & keep materials in use","Ban recycling","Grow landfills"], correct:1, explain:"Keep products/materials circulating at highest value."},
+    {q:"Best fridge practice:", a:["Open door often to cool kitchen","Keep coils clean & door seals tight","Set to super freeze always","Store hot pots immediately"], correct:1, explain:"Coils & seals impact efficiency a lot."},
+    {q:"Carbon footprint of streaming vs downloading one time:", a:["Streaming once is always higher","Downloading once & rewatching can be lower","They’re identical","Downloading is banned"], correct:1, explain:"One download replayed many times can avoid repeat data transfer."},
+    {q:"Most effective recycling behavior:", a:["Wish-cycling questionable items","Rinse and follow local rules","Mix trash & recycling","Bag recyclables in black bags"], correct:1, explain:"Correct sorting prevents contamination and increases yield."},
+    {q:"Biggest driver of aviation non-CO₂ effects:", a:["Contrails forming cirrus","Gate announcements","Seat fabric","Landing gear"], correct:0, explain:"Contrail-induced cirrus can add notable warming."}
   ];
 
   // === State ===
@@ -275,7 +304,7 @@
 
   function finishGame(){
     const scored = players.map(p=>({name:p.name, pts: totalPoints(p.tokens)})).sort((a,b)=> b.pts - a.pts);
-    questionText.textContent = 'Game over! Winner: ' + scored[0].name;
+    questionText.textContent = 'Game over! Winner🏅🏅🏅: ' + scored[0].name;
     choicesEl.innerHTML = '';
     explainText.textContent = scored.map(s=> s.name+': '+s.pts+' pts').join(' | ');
     writeLog('Game finished.');
@@ -306,10 +335,10 @@
     cleanupPopups();
     scamReveal.style.display='none';
     const configs = [
-      { kind:'tinyX', title:'WIN A FREE JET ✈️', text:'Click the TINY “x” to close (not the big button!)' },
-      { kind:'runner', title:'ALLOW NOTIFICATIONS 🔔', text:'Try to hit “Allow”… it runs away!' },
-      { kind:'quiz', title:'Ultra-Secure Check ✅', text:'What is 2 + 2? (type 4)' },
-      { kind:'captcha', title:'Totally Real CAPTCHA 🤖', text:'Slide to 100% to close' },
+      { kind:'tinyX', title:'BUY A JET 2 UR HOLIDAY ✈️', text:'Click the botton NOW' },
+      { kind:'runner', title:'ALLOW NOTIFICATIONS 🔔', text:'Try to hit “Allow”… I DARE U' },
+      { kind:'quiz', title:'Ultra-Secure Check ✅', text:'What is ur ip adress' },
+      { kind:'captcha', title:'How Much of a gooner are u?', text:'Be honest slide to 100%' },
       { kind:'timer', title:'Urgent Offer ⏱️', text:'Wait 3 seconds then close' },
     ];
     remaining = configs.length;
@@ -323,9 +352,9 @@
     div.style.top  = Math.max(8, Math.random()*(window.innerHeight-200))+'px';
 
     const header = document.createElement('header');
-    const h4 = document.createElement('h4'); h4.textContent = cfg.title;
+    const h3 = document.createElement('h3'); h3.textContent = cfg.title;
     const x = document.createElement('div'); x.className='x'; x.textContent='✕';
-    header.appendChild(h4); header.appendChild(x);
+    header.appendChild(h3); header.appendChild(x);
 
     const p = document.createElement('p'); p.textContent = cfg.text;
     const row = document.createElement('div'); row.className='row';
@@ -361,7 +390,7 @@
     if(cfg.kind==='tinyX'){
       const fake = document.createElement('button');
       fake.className='ghost'; fake.textContent='Close';
-      fake.onclick = ()=>{ p.textContent = 'Oops! Wrong close button. Try the tiny ✕.'; };
+      fake.onclick = ()=>{ p.textContent = 'Bruh.'; };
       row.appendChild(fake);
       x.onclick = closePopup;
     }
@@ -375,7 +404,7 @@
         const dy = (Math.random()*100-50);
         div.style.left = Math.min(window.innerWidth-300, Math.max(0, div.offsetLeft+dx))+'px';
         div.style.top  = Math.min(window.innerHeight-160, Math.max(0, div.offsetTop+dy))+'px';
-        if(dodges>3){ allow.onclick = closePopup; p.textContent='Fine, you got me. Click Allow to close.'; }
+        if(dodges>3){ allow.onclick = closePopup; p.textContent='Nah go study twin.'; }
       };
       nope.onclick = ()=>{ p.textContent='Deny won\'t help. Lure the “Allow” and click it.'; };
       row.appendChild(allow); row.appendChild(nope);
@@ -384,7 +413,7 @@
     else if(cfg.kind==='quiz'){
       const input = document.createElement('input'); input.type='text'; input.placeholder='Answer'; input.style.flex='1'; input.style.padding='6px';
       const ok = document.createElement('button'); ok.className='cta'; ok.textContent='Verify';
-      ok.onclick = ()=>{ if(input.value.trim()==='4'){ closePopup(); } else { p.textContent='Nope. Hint: even numbers are cool.'; } };
+      ok.onclick = ()=>{ if(input.value.trim()==='67676.76767676.7676767676.767676767'){ closePopup(); } else { p.textContent='Nope. 32 bit digits numbers r cool.'; } };
       row.appendChild(input); row.appendChild(ok);
       x.onclick = closePopup;
     }
