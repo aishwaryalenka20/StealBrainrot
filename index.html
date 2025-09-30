@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Steal the Brainrot — Climate Quiz Party (Rarities & Points, BUGFIX)</title>
+<style>
+  :root{--bg:#fcfeff;--card:#fff;--ink:#072038;--muted:#526779;--accent:#1f9c93}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#f0fbff 0%,#ffffff 60%);color:var(--ink);display:flex;align-items:center;justify-content:center;min-height:100vh}
+  .wrap{width:min(960px,96vw);padding:18px}
+  header{display:flex;align-items:center;justify-content:space-between}
+  h1{margin:0;font-size:20px}
+  .subtitle{color:var(--muted);font-size:13px}
+  .board{display:grid;grid-template-columns:1fr 300px;gap:14px;margin-top:14px}
+  .card{background:var(--card);border-radius:12px;padding:12px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+  .players{display:flex;gap:6px;flex-wrap:wrap}
+  .player{padding:6px 8px;border-radius:8px;background:#eef8f6;border:1px solid #d8f0ec}
+  button{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:10px;cursor:pointer}
+  button.secondary{background:#e9eef5;color:#111}
+  .choice{padding:10px;border:1px solid #e6eef4;border-radius:10px;margin-top:8px;cursor:pointer}
+  .choice.correct{background:#eafff8}
+  .choice.wrong{background:#fff6f5}
+  .log{height:200px;overflow:auto;background:#fbfdff;border-radius:8px;padding:8px;border:1px dashed #e8f1f7;font-size:13px}
+
+  /* POPUP STYLES */
+  .popup {
+    position: fixed;
+    width: 280px;
+    background:#ffffff;
+    border:1px solid #dfe7f3;
+    border-radius:12px;
+    box-shadow:0 18px 40px rgba(0,0,0,.12);
+    padding:12px 12px 14px;
+    z-index: 9999;
+    user-select:none;
+    animation: popin .16s ease-out;
+  }
+  .popup header {
+    display:flex;align-items:center;justify-content:space-between;margin-bottom:6px
+  }
+  .popup h4 {margin:0;font-size:14px}
+  .popup .x {
+    width:22px;height:22px;border-radius:6px;border:1px solid #e2e8f5;background:#f5f8ff;color:#233;display:grid;place-items:center;cursor:pointer
+  }
+  .popup p {margin:6px 0 10px;font-size:13px;color:#2b3a4a}
+  .popup .row {display:flex;gap:8px;flex-wrap:wrap}
+  .popup button {padding:6px 10px;border-radius:8px;font-size:13px}
+  .popup .ghost {background:#eef2fb;color:#0b1b2a}
+  .popup .cta {background:#1f9c93;color:#fff}
+  .popup .danger {background:#e96a6a}
+  @keyframes popin {from{transform:scale(.95);opacity:0} to{transform:scale(1);opacity:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>🧠 Steal the Brainrot</h1>
+      <div class="subtitle">Correct answer → choose to <b>Steal</b> or <b>Add</b> a random brainrot. Brainrots have rarities & points. Highest total points wins.</div>
+    </div>
+    <div class="controls">
+      <button id="newGame" class="secondary">New Game</button>
+      <button id="showRules" class="secondary">Rules</button>
+      <button id="demoScam" class="secondary">Show Fake Ad</button>
+    </div>
+  </header>
+
+  <div class="board">
+    <section class="card main">
+      <div>Round <span id="roundNum">—</span>/<span id="roundTotal">8</span> · Current: <span id="currentPlayerName">—</span></div>
+      <div class="question" id="questionText" style="margin-top:12px">Press <b>New Game</b> to start.</div>
+      <div class="choices" id="choices"></div>
+      <div id="explainText" style="margin-top:8px;font-size:14px"></div>
+    </section>
+
+    <aside class="card sidebar">
+      <h3>Brainrot Legend</h3>
+      <div class="log" id="legend" style="height:auto">
+        <div>Common <b>🧠</b> = 1 pt</div>
+        <div>Uncommon <b>🌿</b> = 2 pts</div>
+        <div>Rare <b>✨</b> = 3 pts</div>
+        <div>Epic <b>🌎</b> = 4 pts</div>
+        <div>Legendary <b>🐻‍❄️</b> Polarbario Scandinavío = 5 pts</div>
+      </div>
+      <h3>Players</h3>
+      <div id="players" class="players"></div>
+      <h3>Game Log</h3>
+      <div id="log" class="log"></div>
+    </aside>
+  </div>
+</div>
+
+<!-- Rules modal -->
+<div id="rulesModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);align-items:center;justify-content:center">
+  <div style="background:#fff;padding:16px;border-radius:12px;max-width:620px">
+    <h2>How to Play</h2>
+    <ul>
+      <li>Answer a question on your turn.</li>
+      <li><b>Correct</b> → choose <b>Steal</b> (take best token from someone) or <b>Add</b> (random token for you).</li>
+      <li><b>Wrong</b> → no tokens change.</li>
+      <li>After 8 rounds, highest total points wins.</li>
+    </ul>
+    <button id="closeRules">Close</button>
+  </div>
+</div>
+
+<!-- Fake scam ad (fictional) -->
+<div id="scamModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
+  <div style="background:#fff;padding:16px;border-radius:12px;max-width:520px;text-align:center">
+    <h2>🚨 Pop-Up Storm Incoming 🚨</h2>
+    <p>“Donate to save us from <b>Pop Star Nova</b>’s lawsuit!”</p>
+    <p style="font-size:13px;color:#777;margin-top:-4px">Try closing all the pop-ups to see the truth.</p>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:10px">
+      <button id="scamStart" class="cta">Start Pop-Ups</button>
+      <button id="scamClose" class="ghost">Close</button>
+    </div>
+    <p id="scamReveal" style="display:none;color:#a00;font-size:14px;margin-top:12px"><b>Just kidding!</b> Parody scam ad. Red flags: pressure, fake urgency, tricky buttons.</p>
+  </div>
+</div>
+
+<script>
+(()=>{
+  // === Token rarities & points ===
+  const TOKENS = [
+    {name:'Common',    emoji:'🧠', points:1, weight:50},
+    {name:'Uncommon',  emoji:'🌿', points:2, weight:30},
+    {name:'Rare',      emoji:'✨', points:3, weight:15},
+    {name:'Epic',      emoji:'🌎', points:4, weight:4},
+    {name:'Polarbario Scandinavío', emoji:'🐻‍❄️', points:5, weight:1}
+  ];
+  const totalPoints = arr => arr.reduce((s,t)=>s+t.points,0);
+  function drawToken(){
+    const totalW = TOKENS.reduce((s,t)=>s+t.weight,0);
+    let r = Math.random() * totalW;
+    for(const t of TOKENS){ r -= t.weight; if(r <= 0) return {...t}; }
+    return {...TOKENS[0]};
+  }
+  function bestTokenIndex(tokens){
+    let bestPts = -Infinity, bestIdx = -1;
+    for(let i=0;i<tokens.length;i++){
+      if(tokens[i].points > bestPts){ bestPts = tokens[i].points; bestIdx = i; }
+    }
+    return bestIdx;
+  }
+
+  // === Questions ===
+  const QUESTIONS = [
+    {q:"Airplanes contribute to warming not just by CO₂ but also?", a:["Cooling clouds","Contrails & nitrogen oxides","They don’t","Rainbow trails"], correct:1, explain:"Contrails and NOₓ add extra warming."},
+    {q:"Short flights have higher emissions per km?", a:["True","False"], correct:0, explain:"Takeoff/landing burn more fuel per km."},
+    {q:"Why can non-stop flights be better for emissions?", a:["More snacks","Fewer takeoffs/landings","Cooler planes","They use biofuel"], correct:1, explain:"Takeoff/landing are fuel-heavy; fewer of them can reduce emissions."}
+  ];
+
+  // === State ===
+  let players = [], current = 0, deck = [], round = 0, totalRounds = 8;
+
+  // === Elements ===
+  const logEl = document.getElementById('log');
+  const playersEl = document.getElementById('players');
+  const questionText = document.getElementById('questionText');
+  const choicesEl = document.getElementById('choices');
+  const explainText = document.getElementById('explainText');
+  const currentPlayerName = document.getElementById('currentPlayerName');
+  const roundNum = document.getElementById('roundNum');
+  const roundTotal = document.getElementById('roundTotal');
+
+  function writeLog(s){ const p = document.createElement('div'); p.innerHTML = s; logEl.prepend(p); }
+
+  function setupPlayers(n=3){
+    players = [];
+    for(let i=1;i<=n;i++) players.push({name:'P'+i, tokens:[]});
+    current = 0; round = 0;
+    renderPlayers(); updateRoundLabel();
+  }
+
+  function renderPlayers(){
+    playersEl.innerHTML = '';
+    players.forEach((pl)=>{
+      const pts = totalPoints(pl.tokens);
+      const d = document.createElement('div'); d.className='player';
+      d.innerHTML = `<b>${pl.name}</b> <span style="margin-left:6px">${pl.tokens.map(t=>t.emoji).join('')}</span> <span style="margin-left:6px;color:#335">(${pts} pts)</span>`;
+      playersEl.appendChild(d);
+    });
+    currentPlayerName.textContent = players[current]?.name || '—';
+  }
+
+  function updateRoundLabel(){ roundNum.textContent = Math.min(round+1, totalRounds); roundTotal.textContent = totalRounds; }
+  function shuffleDeck(){ deck = [...QUESTIONS].sort(()=>Math.random()-.5); }
+  function ask(){ if(deck.length===0) shuffleDeck(); const q = deck.pop(); showQuestion(q); }
+
+  function showQuestion(q){
+    explainText.textContent = '';
+    questionText.textContent = q.q;
+    choicesEl.innerHTML = '';
+    q.a.forEach((opt,i)=>{
+      const b = document.createElement('div'); b.className='choice'; b.textContent = opt;
+      b.onclick = ()=> selectAnswer(i,q);
+      choicesEl.appendChild(b);
+    });
+  }
+
+  function selectAnswer(i,q){
+    [...choicesEl.children].forEach((ch,idx)=>{
+      ch.style.pointerEvents='none';
+      if(idx===q.correct) ch.classList.add('correct');
+      if(idx===i && idx!==q.correct) ch.classList.add('wrong');
+    });
+
+    if(i===q.correct){
+      explainText.innerHTML = '<b>Correct!</b> ' + q.explain;
+      writeLog(players[current].name + ' answered correctly.');
+      showStealPrompt(); // choose to steal/add
+    } else {
+      explainText.innerHTML = '<b>Wrong.</b> ' + q.explain;
+      writeLog(players[current].name + ' answered wrong.');
+      proceedNextTurn();
+    }
+  }
+
+  function showStealPrompt(){
+    const box = document.createElement('div');
+    box.style.marginTop='8px';
+    box.innerHTML = 'Choose: ';
+
+    // Steal buttons for other players
+    players.forEach((p,idx)=>{
+      if(idx===current) return;
+      const btn = document.createElement('button');
+      btn.textContent = 'Steal from ' + p.name;
+      btn.onclick = ()=>{ doSteal(idx); box.remove(); };
+      btn.style.marginRight='6px';
+      box.appendChild(btn);
+    });
+
+    // Add-to-self
+    const selfBtn = document.createElement('button');
+    selfBtn.textContent = 'Add to ' + players[current].name;
+    selfBtn.onclick = ()=>{ doSteal(-1); box.remove(); };
+    box.appendChild(selfBtn);
+
+    logEl.prepend(box);
+  }
+
+  function doSteal(victimIdx){
+    if(victimIdx === -1){
+      const tok = drawToken();
+      players[current].tokens.push(tok);
+      writeLog(players[current].name + ' adds ' + tok.emoji + ' (' + tok.name + ', ' + tok.points + ' pt' + (tok.points>1?'s':'') + ').');
+    } else {
+      const victim = victimIdx;
+      if(players[victim].tokens.length === 0){
+        const tok = drawToken();
+        players[current].tokens.push(tok);
+        writeLog(players[victim].name + ' has no brainrots — ' + players[current].name + ' gains ' + tok.emoji + ' (' + tok.name + ').');
+      } else {
+        // steal highest-point token from victim
+        const idx = bestTokenIndex(players[victim].tokens);
+        const stolen = players[victim].tokens.splice(idx,1)[0];
+        players[current].tokens.push(stolen);
+        writeLog(players[current].name + ' steals ' + stolen.emoji + ' (' + stolen.name + ', ' + stolen.points + ' pts) from ' + players[victim].name + '!');
+      }
+    }
+
+    renderPlayers();
+    proceedNextTurn();
+  }
+
+  function proceedNextTurn(){
+    round++;
+    if(round >= totalRounds){ finishGame(); return; }
+    current = (current + 1) % players.length;
+    updateRoundLabel();
+    renderPlayers();
+    ask();
+  }
+
+  function finishGame(){
+    const scored = players.map(p=>({name:p.name, pts: totalPoints(p.tokens)})).sort((a,b)=> b.pts - a.pts);
+    questionText.textContent = 'Game over! Winner: ' + scored[0].name;
+    choicesEl.innerHTML = '';
+    explainText.textContent = scored.map(s=> s.name+': '+s.pts+' pts').join(' | ');
+    writeLog('Game finished.');
+  }
+
+  // === UI wiring ===
+  document.getElementById('newGame').onclick = ()=>{ setupPlayers(3); shuffleDeck(); ask(); };
+  document.getElementById('showRules').onclick = ()=>{ document.getElementById('rulesModal').style.display='flex'; };
+  document.getElementById('closeRules').onclick = ()=>{ document.getElementById('rulesModal').style.display='none'; };
+
+  // --- Fake Ad: Multi-pop-up mini-game (now fully interactable) ---
+  const scamModal = document.getElementById('scamModal');
+  const scamReveal = document.getElementById('scamReveal');
+  document.getElementById('demoScam').onclick = ()=>{ scamModal.style.display='flex'; scamReveal.style.display='none'; };
+  document.getElementById('scamClose').onclick = ()=>{ scamModal.style.display='none'; cleanupPopups(); };
+  document.getElementById('scamStart').onclick = startPopupStorm;
+
+  let remaining = 0;
+  let popups = [];
+
+  function cleanupPopups(){
+    popups.forEach(p => p.remove());
+    popups = [];
+    remaining = 0;
+  }
+
+  function startPopupStorm(){
+    cleanupPopups();
+    scamReveal.style.display='none';
+    const configs = [
+      { kind:'tinyX', title:'WIN A FREE JET ✈️', text:'Click the TINY “x” to close (not the big button!)' },
+      { kind:'runner', title:'ALLOW NOTIFICATIONS 🔔', text:'Try to hit “Allow”… it runs away!' },
+      { kind:'quiz', title:'Ultra-Secure Check ✅', text:'What is 2 + 2? (type 4)' },
+      { kind:'captcha', title:'Totally Real CAPTCHA 🤖', text:'Slide to 100% to close' },
+      { kind:'timer', title:'Urgent Offer ⏱️', text:'Wait 3 seconds then close' },
+    ];
+    remaining = configs.length;
+    configs.forEach(cfg => spawnPopup(cfg));
+  }
+
+  function spawnPopup(cfg){
+    const div = document.createElement('div');
+    div.className = 'popup';
+    div.style.left = Math.max(8, Math.random()*(window.innerWidth-300))+'px';
+    div.style.top  = Math.max(8, Math.random()*(window.innerHeight-200))+'px';
+
+    const header = document.createElement('header');
+    const h4 = document.createElement('h4'); h4.textContent = cfg.title;
+    const x = document.createElement('div'); x.className='x'; x.textContent='✕';
+    header.appendChild(h4); header.appendChild(x);
+
+    const p = document.createElement('p'); p.textContent = cfg.text;
+    const row = document.createElement('div'); row.className='row';
+
+    div.appendChild(header); div.appendChild(p); div.appendChild(row);
+    document.body.appendChild(div);
+    popups.push(div);
+
+    // Close helper
+    function closePopup(){
+      if(!div.parentNode) return;
+      div.remove();
+      remaining--;
+      if(remaining<=0){
+        scamReveal.style.display='block';
+      }
+    }
+
+    // Dragging
+    let drag=false, sx=0, sy=0, sl=0, st=0;
+    header.style.cursor='move';
+    header.onmousedown = e=>{ drag=true; sx=e.clientX; sy=e.clientY; sl=div.offsetLeft; st=div.offsetTop; e.preventDefault(); };
+    window.addEventListener('mousemove', e=>{
+      if(!drag) return;
+      const nx = sl + (e.clientX - sx);
+      const ny = st + (e.clientY - sy);
+      div.style.left = Math.min(window.innerWidth-300, Math.max(0, nx)) + 'px';
+      div.style.top  = Math.min(window.innerHeight-160, Math.max(0, ny)) + 'px';
+    });
+    window.addEventListener('mouseup', ()=> drag=false);
+
+    // Behaviors
+    if(cfg.kind==='tinyX'){
+      const fake = document.createElement('button');
+      fake.className='ghost'; fake.textContent='Close';
+      fake.onclick = ()=>{ p.textContent = 'Oops! Wrong close button. Try the tiny ✕.'; };
+      row.appendChild(fake);
+      x.onclick = closePopup;
+    }
+    else if(cfg.kind==='runner'){
+      const allow = document.createElement('button'); allow.className='cta'; allow.textContent='Allow';
+      const nope = document.createElement('button'); nope.className='ghost'; nope.textContent='Deny';
+      let dodges=0;
+      allow.onmouseenter = ()=>{
+        dodges++;
+        const dx = (Math.random()*160-80);
+        const dy = (Math.random()*100-50);
+        div.style.left = Math.min(window.innerWidth-300, Math.max(0, div.offsetLeft+dx))+'px';
+        div.style.top  = Math.min(window.innerHeight-160, Math.max(0, div.offsetTop+dy))+'px';
+        if(dodges>3){ allow.onclick = closePopup; p.textContent='Fine, you got me. Click Allow to close.'; }
+      };
+      nope.onclick = ()=>{ p.textContent='Deny won\'t help. Lure the “Allow” and click it.'; };
+      row.appendChild(allow); row.appendChild(nope);
+      x.onclick = closePopup;
+    }
+    else if(cfg.kind==='quiz'){
+      const input = document.createElement('input'); input.type='text'; input.placeholder='Answer'; input.style.flex='1'; input.style.padding='6px';
+      const ok = document.createElement('button'); ok.className='cta'; ok.textContent='Verify';
+      ok.onclick = ()=>{ if(input.value.trim()==='4'){ closePopup(); } else { p.textContent='Nope. Hint: even numbers are cool.'; } };
+      row.appendChild(input); row.appendChild(ok);
+      x.onclick = closePopup;
+    }
+    else if(cfg.kind==='captcha'){
+      const range = document.createElement('input'); range.type='range'; range.min='0'; range.max='100'; range.value='0'; range.style.width='100%';
+      range.oninput = ()=>{ if(parseInt(range.value,10) >= 100){ closePopup(); } };
+      row.appendChild(range);
+      x.onclick = closePopup;
+    }
+    else if(cfg.kind==='timer'){
+      const waitBtn = document.createElement('button'); waitBtn.className='ghost'; waitBtn.textContent='Please wait…';
+      waitBtn.disabled = true;
+      row.appendChild(waitBtn);
+      setTimeout(()=>{ waitBtn.disabled=false; waitBtn.textContent='Close Now'; waitBtn.onclick = closePopup; }, 3000);
+      x.onclick = closePopup;
+    }
+  }
+
+  // === Init ===
+  setupPlayers(3);
+
+  // Optional sanity test
+  window._brainrotTests = function(){
+    const results = {ok:0, fail:0, logs:[]};
+    function assert(c,m){ c?results.ok++:(results.fail++,results.logs.push('FAIL: '+m)); }
+    (function(){ const pts = totalPoints([{points:1},{points:2},{points:5}]); assert(pts===8,'sum points');})();
+    (function(){ const arr=[{points:1},{points:4},{points:3}]; assert(bestTokenIndex(arr)===1,'best index');})();
+    console.log('Brainrot tests — ok:',results.ok,'fail:',results.fail,results.logs);
+    return results;
+  };
+})();
+</script>
+</body>
+</html>
+
